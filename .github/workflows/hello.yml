@@ -1,4 +1,4 @@
-name: Deploy buyorderbot 
+name: Build Image for test 
 
 env:
   REGISTRY: ghcr.io
