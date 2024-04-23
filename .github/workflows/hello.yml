@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Login to GitHub Packages
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u $GITHUB_ACTOR --password-stdin
+        run: echo "${{ secrets.SECRETS_GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u $GITHUB_ACTOR --password-stdin
       
       - name: Build images
         run: docker -t docker.pkg.github.com/${{ github.repository }}/hello:latest .
