@@ -1,0 +1,29 @@
+name: Deploy buyorderbot 
+
+env:
+  REGISTRY: ghcr.io
+on:
+  push:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Packages
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u $GITHUB_ACTOR --password-stdin
+      
+      - name: Build images
+        run: docker -t docker.pkg.github.com/${{ github.repository }}/hello:latest .
+
+      - name: Push images to repository
+        run: docker push docker.pkg.github.com/${{ github.repository }}/hello:latest 
