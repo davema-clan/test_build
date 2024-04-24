@@ -45,6 +45,8 @@ jobs:
     needs: build
 
     steps:
+      - name: Get Short SHA
+        run: echo "${GITHUB_SHA:0:7}" > short_sha.txt
 
       - name: Deploy Test
         uses: easingthemes/ssh-deploy@main
@@ -53,7 +55,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST_TEST }}
           REMOTE_USER: ubuntu
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
-          SHORT_SHA: $(echo $GITHUB_SHA | cut -c1-7)
+          SHORT_SHA: $(cat short_sha.txt)
           SCRIPT_RUN: |
             docker ps |grep ${{ env.IMAGE_NAME }}  && docker stop ${{ env.IMAGE_NAME }} && docker rm ${{ env.IMAGE_NAME }}
             docker login ghcr.io -u $GITHUB_ACTOR -p "${{ secrets.SECRETS_GITHUB_TOKEN }}"
