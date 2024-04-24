@@ -30,16 +30,19 @@ jobs:
         run: |
           SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
           echo "Short SHA: $SHORT_SHA"
+          echo "::set-output name=short_sha::$SHORT_SHA"
 
       - name: Build images
         env: 
           SHORT_SHA: $(echo $GITHUB_SHA | cut -c1-7)
         if: ${{ github.ref_type == 'branch' }}
-        run: make build ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG="${SHORT_SHA}" IMAGE_NAME=${{ env.IMAGE_NAME }}
+        run: make build ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG=${{ steps.get_short_sha.outputs.short_sha }} IMAGE_NAME=${{ env.IMAGE_NAME }}
 
       - name: Push images to repository
+        env:
+            IMAGE_TAG: ${{ steps.get_short_sha.outputs.short_sha }}
         if: ${{ github.ref_type == 'branch' }}
-        run: make push ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG=${{ env.SHORT_SHA }} IMAGE_NAME=${{ env.IMAGE_NAME }}
+        run: make push ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG=${{ env.IMAGE_TAG }} IMAGE_NAME=${{ env.IMAGE_NAME }}
 
   deploy_test:
     runs-on: ubuntu-latest
