@@ -55,7 +55,7 @@ jobs:
           GITHUB_ACTOR: $GITHUB_ACTOR
           SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAG: $SHORT_SHA
+          IMAGE_TAG: ${{ env.SHORT_SHA }}
           REGISTRY: ${{ github.repository }}
         with:
           host: ${{ secrets.REMOTE_HOST_TEST }}
