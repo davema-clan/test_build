@@ -2,6 +2,7 @@ name: Build Image for test
 
 env:
   REGISTRY: ghcr.io
+  IMAGE_NAME: hello
 on:
   push:
     branches: [ master ]
@@ -11,8 +12,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      IMAGE_NAME: hello
 
     permissions:
       contents: read
@@ -31,14 +30,15 @@ jobs:
         run: |
           SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
           echo "Short SHA: $SHORT_SHA"
+          echo "::set-output name=short_sha::${SHORT_SHA}
       
       - name: Build images
         if: ${{ github.ref_type == 'branch' }}
-        run: make build ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG="${{ SHORT_SHA }}" IMAGE_NAME=${{ IMAGE_NAME }}
+        run: make build ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG="$SHORT_SHA" IMAGE_NAME=${{ env.IMAGE_NAME }}
 
       - name: Push images to repository
         if: ${{ github.ref_type == 'branch' }}
-        run: make push ARGS="ghcr.io/${{ github.repository }}/"
+        run: make push ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG="$SHORT_SHA" IMAGE_NAME=${{ env.IMAGE_NAME }}
 
   deploy_test:
     runs-on: ubuntu-latest
@@ -53,7 +53,8 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST_TEST }}
           REMOTE_USER: ubuntu
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+          SHORT_SHA: ${{ needs.build.outputs.get_short_sha }}
           SCRIPT_RUN: |
-            docker ps |grep ${{ IMAGE_NAME }}  && docker stop ${{ IMAGE_NAME }} && docker rm ${{ IMAGE_NAME }}
+            docker ps |grep ${{ IMAGE_NAME }}  && docker stop ${{ env.IMAGE_NAME }} && docker rm ${{ env.IMAGE_NAME }}
             docker login ghcr.io -u $GITHUB_ACTOR -p "${{ secrets.SECRETS_GITHUB_TOKEN }}"
             docker run -d --name ${{ env.IMAGE_NAME }} ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ SHORT_SHA }}
