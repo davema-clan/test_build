@@ -22,8 +22,31 @@ jobs:
       - name: Login to GitHub Packages
         run: echo "${{ secrets.SECRETS_GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       
+      - name: Get Commit Ref Slug
+        run: |
+          COMMIT_REF_SLUG=$(echo "${GITHUB_REF}" | cut -d'/' -f 3 | tr '[:upper:]' '[:lower:]' | sed 's/[^a-zA-Z0-9]/-/g')
+          echo "Commit Ref Slug: $COMMIT_REF_SLUG"
+      
       - name: Build images
-        run: make build ARGS="ghcr.io/${{ github.repository }}/"
+        run: make build ARGS="ghcr.io/${{ github.repository }}/" 
 
       - name: Push images to repository
         run: make push ARGS="ghcr.io/${{ github.repository }}/"
+
+      - name: Connect twingate
+        uses: twingate/github-action@v1
+        with:
+          service-key: ${{ secrets.TWG_SERVICE_KEY }}
+
+      - name: Deploy Test
+        uses: easingthemes/ssh-deploy@main
+        if: ${{ github.ref_type == 'branch' }}
+        env:
+          REMOTE_HOST: ${{ vars.REMOTE_HOST_TEST }}
+          REMOTE_USER: ubuntu
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+          SCRIPT_BEFORE: |
+            docker stop hello 
+            docker rm hello
+          SCRIPT_RUN: |
+            docker run -d --name hello ghcr.io/${{ github.repository }}/hello:latest
