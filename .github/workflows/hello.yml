@@ -51,11 +51,11 @@ jobs:
       - name: Deploy Test
         uses: appleboy/ssh-action@v1.0.3
         env:
-           GITHUB_ACTOR: ${{ GITHUB_ACTOR }}
-           SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
-           IMAGE_NAME: ${{ env.IMAGE_NAME }}
-           IMAGE_TAG: ${{ env.SHORT_SHA }}
-           repository: ${{ github.repository }}
+          GITHUB_ACTOR: ${{ GITHUB_ACTOR }}
+          SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAG: ${{ env.SHORT_SHA }}
+          repository: ${{ github.repository }}
         with:
           host: ${{ secrets.REMOTE_HOST_TEST }}
           username: ubuntu
