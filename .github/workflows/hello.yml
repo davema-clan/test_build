@@ -45,18 +45,13 @@ jobs:
     needs: build
 
     steps:
-      - name: Get Short SHA
-        run: |
-          echo "${GITHUB_SHA:0:7}" > short_sha.txt
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
-        
       - name: Deploy Test
         uses: appleboy/ssh-action@v1.0.3
         env:
           GITHUB_ACTOR: $GITHUB_ACTOR
           SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAG: ${{ env.SHORT_SHA }}
+          IMAGE_TAG: $SHORT_SHA
           REGISTRY: ${{ github.repository }}
         with:
           host: ${{ secrets.REMOTE_HOST_TEST }}
@@ -65,4 +60,4 @@ jobs:
           port: 22
           envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_TAG,REGISTRY
           script: |
-            echo "$GITHUB_ACTOR $REGISTRY $IMAGE_TAG $IMAGE_TAG  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
+            echo "$GITHUB_ACTOR $REGISTRY $IMAGE_TAG  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
