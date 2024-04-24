@@ -13,3 +13,7 @@ run:
 # 清理 Docker 镜像
 clean:
 	docker rmi $(ARGS)$(IMAGE_NAME):$(IMAGE_TAG)
+
+#推送镜像
+push:
+	docker push $(ARGS)$(IMAGE_NAME):$(IMAGE_TAG)
