@@ -49,14 +49,13 @@ jobs:
         run: echo "${GITHUB_SHA:0:7}" > short_sha.txt
         
       - name: Deploy Test
-        uses: easingthemes/ssh-deploy@main
-        if: ${{ github.ref_type == 'branch' }}
-        env:
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST_TEST }}
-          REMOTE_USER: ubuntu
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
-          SHORT_SHA: $(echo $GITHUB_SHA | cut -c1-7)
-          SCRIPT_RUN: |
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.REMOTE_HOST_TEST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+          port: 22
+          script: |
             docker ps |grep ${{ env.IMAGE_NAME }}  && docker stop ${{ env.IMAGE_NAME }} && docker rm ${{ env.IMAGE_NAME }}
             docker login ghcr.io -u $GITHUB_ACTOR -p "${{ secrets.SECRETS_GITHUB_TOKEN }}"
             docker run -d --name ${{ env.IMAGE_NAME }} ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }}
