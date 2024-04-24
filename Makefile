@@ -1,6 +1,6 @@
 # 定义变量
-IMAGE_NAME := hello
-IMAGE_TAG := latest
+IMAGE_NAME ?= hello
+IMAGE_TAG ?= latest
 
 # 构建 Docker 镜像
 build:
