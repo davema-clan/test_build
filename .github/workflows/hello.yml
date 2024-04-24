@@ -63,4 +63,4 @@ jobs:
           port: 22
           envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_TAG,repository
           script: |
-            echo "$GITHUB_ACTOR $repository $GITHUB_ACTOR"
+            echo "$GITHUB_ACTOR $repository $IMAGE_TAG $IMAGE_TAG  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
