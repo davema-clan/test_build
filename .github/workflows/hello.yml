@@ -26,7 +26,6 @@ jobs:
         run: echo "${{ secrets.SECRETS_GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       
       - name: Get Short SHA
-        if: ${{ github.ref_type == 'branch' }}
         run: |
           SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
           echo "Short SHA: $SHORT_SHA"
@@ -46,8 +45,9 @@ jobs:
 
     steps:
       - name: print IMAGE_TAG 
-        run: echo $SHORT_SHA
-        
+        run: |
+          echo "Short SHA: $SHORT_SHA"
+
       - name: Deploy Test
         uses: appleboy/ssh-action@v1.0.3
         env:
