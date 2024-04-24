@@ -55,6 +55,6 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
           SHORT_SHA: ${{ needs.build.outputs.get_short_sha }}
           SCRIPT_RUN: |
-            docker ps |grep ${{ IMAGE_NAME }}  && docker stop ${{ env.IMAGE_NAME }} && docker rm ${{ env.IMAGE_NAME }}
+            docker ps |grep ${{ env.IMAGE_NAME }}  && docker stop ${{ env.IMAGE_NAME }} && docker rm ${{ env.IMAGE_NAME }}
             docker login ghcr.io -u $GITHUB_ACTOR -p "${{ secrets.SECRETS_GITHUB_TOKEN }}"
             docker run -d --name ${{ env.IMAGE_NAME }} ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ SHORT_SHA }}
