@@ -46,7 +46,7 @@ jobs:
     steps:
       - name: print IMAGE_TAG 
         run: |
-          echo "Short SHA: $SHORT_SHA"
+          echo "Short SHA: ${{ env.SHORT_SHA }}"
 
       - name: Deploy Test
         uses: appleboy/ssh-action@v1.0.3
