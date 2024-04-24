@@ -23,7 +23,8 @@ jobs:
         run: echo "${{ secrets.SECRETS_GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u $GITHUB_ACTOR --password-stdin
       
       - name: Build images
-        run: docker build -t docker.pkg.github.com/${{ github.repository }}/hello:latest .
+        # run: docker build -t docker.pkg.github.com/${{ github.repository }}/hello:latest .
+        run: make build ARGS="docker.pkg.github.com/${{ github.repository }}"
 
       - name: Push images to repository
         run: docker push docker.pkg.github.com/${{ github.repository }}/hello:latest 
