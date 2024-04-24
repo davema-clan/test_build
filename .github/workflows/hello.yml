@@ -45,6 +45,9 @@ jobs:
     needs: build
 
     steps:
+      - name: print IMAGE_TAG 
+        run: echo $SHORT_SHA
+        
       - name: Deploy Test
         uses: appleboy/ssh-action@v1.0.3
         env:
