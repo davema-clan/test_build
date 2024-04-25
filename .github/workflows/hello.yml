@@ -67,7 +67,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
           port: 22
-          envs: env.GITHUB_ACTOR,env.SECRETS_GITHUB_TOKEN,env.IMAGE_NAME,env.IMAGE_TAG,env.REGISTRY
+          envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_TAG,REGISTRY
           script: |
             echo "$GITHUB_ACTOR $REGISTRY $IMAGE_TAG  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
             echo "$SECRETS_GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
