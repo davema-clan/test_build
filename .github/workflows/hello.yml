@@ -93,7 +93,7 @@ jobs:
         
       - name: get short sha
         run: |
-          IMAGE_SHA=$(echo ${GITHUB_SHA	} | cut -c1-7)
+          IMAGE_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)
           echo "IMAGE_SHA=$IMAGE_SHA" >> $GITHUB_ENV
 
       
