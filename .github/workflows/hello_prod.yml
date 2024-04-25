@@ -14,4 +14,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run workflow from main repository
-        uses: ./workflows/hello.yml
+        uses: ./workflows
