@@ -44,13 +44,9 @@ jobs:
         run: echo "${{ secrets.SECRETS_GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
       - name: Build images
-        env:
-          IMAGE_TAG: ${{ steps.get_short_sha.outputs.SHORT_SHA}}
         run: make build ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG="${IMAGE_TAG}" IMAGE_NAME=${{ env.IMAGE_NAME }}
 
       - name: Push images to repository
-        env:
-          IMAGE_TAG: ${{ steps.get_short_sha.outputs.SHORT_SHA}}
         run: make push ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG="${IMAGE_TAG}" IMAGE_NAME=${{ env.IMAGE_NAME }}
 
   deploy_test:
