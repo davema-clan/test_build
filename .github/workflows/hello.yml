@@ -3,6 +3,7 @@ name: Build Image for test
 env:
   REGISTRY: ghcr.io/${{ github.repository }}
   IMAGE_NAME: hello
+  SHORT_SHA: ''
   SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 on:
   push:
@@ -11,8 +12,24 @@ on:
     types: [ published ]
 
 jobs:
+  GetSHA:
+    runs-on: ubuntu-latest
+
+    outputs:
+      IMAGE_TAG: ${{ steps.get_short_sha.outputs.SHORT_SHA}}
+
+    steps:
+      - name: Get Short SHA
+        id: get_short_sha
+        run: |
+          SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "Short SHA: $SHORT_SHA"
+
   build:
     runs-on: ubuntu-latest
+
+    needs: GetSHA
 
     if: ${{ github.ref_type == 'branch' }}
 
@@ -25,13 +42,6 @@ jobs:
 
       - name: Login to GitHub Packages
         run: echo "${{ secrets.SECRETS_GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
-      
-      - name: Get Short SHA
-        id: get_short_sha
-        run: |
-          SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "Short SHA: $SHORT_SHA"
 
       - name: Build images
         env:
@@ -46,7 +56,7 @@ jobs:
   deploy_test:
     runs-on: ubuntu-latest
     
-    needs: build
+    needs: [ GetSHA, build ]
 
     if: ${{ github.ref_type == 'branch' }}
 
