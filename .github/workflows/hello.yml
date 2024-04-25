@@ -7,8 +7,7 @@ env:
   SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 on:
   push:
-    tags:
-      - '*'
+    branches: [ master ]
 
     
 
