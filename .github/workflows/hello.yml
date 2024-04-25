@@ -15,7 +15,6 @@ on:
 jobs:
   GetSHA:
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'branch' }}
 
     outputs:
       IMAGE_SHA: ${{ steps.get_short_sha.outputs.SHORT_SHA}}
