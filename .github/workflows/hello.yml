@@ -10,6 +10,12 @@ on:
     branches: [ master ]
   release:
     types: [ published ]
+  workflow_dispatch:
+    inputs:
+      admin_approval:
+        description: 'Require admin approval'
+        required: true
+        default: 'false'
     
 
 jobs:
@@ -77,9 +83,19 @@ jobs:
             docker rm $IMAGE_NAME
             docker run -d --name $IMAGE_NAME ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
 
+  admin_approval_job:
+    if: github.event.inputs.admin_approval == 'true' && github.actor == 'admin'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Approval step
+        run: echo "Admin approval needed"
+      - name: Approve
+        run: echo "Admin approved"
+        id: admin_approval
+
   Deploy_Prod:
     runs-on: ubuntu-latest
-    needs: GetSHA
+    needs: [ GetSHA, admin_approval_job ]
     
     if: ${{ github.ref_type == 'tag' }}
 
