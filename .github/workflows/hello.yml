@@ -32,7 +32,7 @@ jobs:
       - name: Get Short SHA
         id: get_short_sha
         run: |
-          SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)"
+          SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
           echo "Short SHA: $SHORT_SHA"
 
