@@ -17,4 +17,4 @@ jobs:
         with:
           submodules: true
       - name: Run submodule workflow
-        uses: ./workflows/hello.yml
+        uses: ./workflows
