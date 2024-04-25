@@ -6,10 +6,6 @@ env:
   IMAGE_NAME: hello
   SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 on:
-  push:
-    branches: [ master ]
-  release:
-    types: [ published ]
   workflow_dispatch:
     inputs:
       admin_approval:
