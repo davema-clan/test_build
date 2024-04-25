@@ -3,7 +3,6 @@ name: Build Image for test
 env:
   REGISTRY: ghcr.io/${{ github.repository }}
   IMAGE_NAME: hello
-  SHORT_SHA: ''
   SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 on:
   push:
