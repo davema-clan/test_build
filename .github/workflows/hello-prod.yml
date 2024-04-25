@@ -1,0 +1,82 @@
+name: deploy Image for prod 
+
+env:
+  # IMAGE_NAME 用于 程序名
+  REGISTRY: ghcr.io/${{ github.repository }}
+  IMAGE_NAME: hello
+  SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
+on:
+  workflow_dispatch:
+    inputs:
+      admin_approval:
+        description: 'Require admin approval'
+        required: true
+        default: 'false'
+    
+
+jobs:
+  admin_approval_job:
+    if: github.event.inputs.admin_approval == 'true' && github.actor == 'davema-clan'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Approval step
+        run: echo "Admin approval needed"
+      - name: Approve
+        run: echo "Admin approved"
+        id: admin_approval
+
+  GetSHA:
+    runs-on: ubuntu-latest
+    needs: admin_approval_job
+
+    outputs:
+      IMAGE_SHA: ${{ steps.get_short_sha.outputs.SHORT_SHA}}
+
+    steps:
+      - name: Get Short SHA
+        id: get_short_sha
+        run: |
+          SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "Short SHA: $SHORT_SHA"
+
+  Deploy_Prod:
+    runs-on: ubuntu-latest
+    needs: [ GetSHA, admin_approval_job ]
+    
+    if: ${{ github.ref_type == 'tag' }}
+
+    env:
+      IMAGE_SHA: ${{ needs.GetSHA.outputs.IMAGE_SHA}}
+
+    steps:
+      - name: Get Tag Name
+        id: get_tag_name
+        run: |
+          IMAGE_TAG=$(echo $GITHUB_REF | awk -F '/' '{print $NF}')
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+  
+      
+      - name: docker login github repo and push 
+        run: echo "${SECRETS_GITHUB_TOKEN}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+        
+      - name: build image to prod
+        run: |
+          docker pull ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
+          docker tag ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA} ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+          docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+
+      - name: Deploy prod
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.REMOTE_HOST_TEST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+          port: 22
+          envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_TAG,REGISTRY
+          script: |
+            echo "$GITHUB_ACTOR $REGISTRY $IMAGE_TAG  $IMAGE_NAME $SECRETS_GITHUB_TOKEN IMAGE_SHA" > test.txt
+            echo "$SECRETS_GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+            docker stop $IMAGE_NAME
+            docker rm $IMAGE_NAME
+            docker run -d --name $IMAGE_NAME ghcr.io/${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
