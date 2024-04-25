@@ -82,9 +82,6 @@ jobs:
     
     if: ${{ github.ref_type == 'tag' }}
 
-    env:
-      IMAGE_SHA: ${{ needs.GetSHA.outputs.IMAGE_SHA}}
-
     steps:
       - name: Get Tag Name
         id: get_tag_name
