@@ -33,8 +33,8 @@ jobs:
 
     if: ${{ github.ref_type == 'branch' }}
 
-    outputs:
-      IMAGE_TAG: ${{ steps.get_short_sha.outputs.SHORT_SHA}}
+    env:
+      IMAGE_TAG: ${{ needs.GetSHA.outputs.IMAGE_TAG}}
 
     steps:
       - name: Checkout repository
@@ -60,11 +60,12 @@ jobs:
 
     if: ${{ github.ref_type == 'branch' }}
 
+    env:
+      IMAGE_TAG: ${{ needs.GetSHA.outputs.IMAGE_TAG}}
+
     steps:
       - name: Deploy Test
         uses: appleboy/ssh-action@v1.0.3
-        env:
-          IMAGE_TAG: ${{ needs.build.outputs.IMAGE_TAG}}
         with:
           host: ${{ secrets.REMOTE_HOST_TEST }}
           username: ubuntu
