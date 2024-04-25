@@ -21,4 +21,4 @@ jobs:
           git submodule update --remote --merge
   
       - name: Run submodule workflow
-        uses: ./workflows
+        uses: workflows
