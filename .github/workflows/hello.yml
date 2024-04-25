@@ -1,9 +1,10 @@
 name: Build Image for test 
 
 env:
-  REGISTRY: ghcr.io
+  REGISTRY: ghcr.io/${{ github.repository }}
   IMAGE_NAME: hello
   SHORT_SHA: ''
+  SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 on:
   push:
     branches: [ master ]
@@ -60,17 +61,13 @@ jobs:
       - name: Deploy Test
         uses: appleboy/ssh-action@v1.0.3
         env:
-          GITHUB_ACTOR: $GITHUB_ACTOR
-          SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
           IMAGE_TAG: ${{ needs.build.outputs.IMAGE_TAG}}
-          REGISTRY: ${{ github.repository }}
         with:
           host: ${{ secrets.REMOTE_HOST_TEST }}
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
           port: 22
-          envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_TAG,REGISTRY
+          envs: env.GITHUB_ACTOR,env.SECRETS_GITHUB_TOKEN,env.IMAGE_NAME,env.IMAGE_TAG,env.REGISTRY
           script: |
             echo "$GITHUB_ACTOR $REGISTRY $IMAGE_TAG  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
             echo "$SECRETS_GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
