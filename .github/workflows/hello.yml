@@ -44,10 +44,10 @@ jobs:
         run: echo "${{ secrets.SECRETS_GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
       - name: Build images
-        run: make build ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG="${IMAGE_TAG}" IMAGE_NAME=${{ env.IMAGE_NAME }}
+        run: make build ARGS="${REGISTRY}/" IMAGE_TAG="${IMAGE_TAG}" IMAGE_NAME=${IMAGE_NAME}
 
       - name: Push images to repository
-        run: make push ARGS="ghcr.io/${{ github.repository }}/" IMAGE_TAG="${IMAGE_TAG}" IMAGE_NAME=${{ env.IMAGE_NAME }}
+        run: make push ARGS="${REGISTRY}/" IMAGE_TAG="${IMAGE_TAG}" IMAGE_NAME=${IMAGE_NAME}
 
   deploy_test:
     runs-on: ubuntu-latest
