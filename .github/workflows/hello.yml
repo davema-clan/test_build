@@ -93,6 +93,9 @@ jobs:
         
       - name: get short sha
         run: |
+          echo ${github.event.before}
+          echo "test"
+          echo ${{ github.event.before }}
           IMAGE_SHA=$(echo ${{ github.event.before }} | cut -c1-7)
           echo "IMAGE_SHA=$IMAGE_SHA" >> $GITHUB_ENV
 
