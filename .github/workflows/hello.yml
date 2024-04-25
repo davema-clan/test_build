@@ -15,6 +15,7 @@ on:
 jobs:
   GetSHA:
     runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'branch' }}
 
     outputs:
       IMAGE_SHA: ${{ steps.get_short_sha.outputs.SHORT_SHA}}
@@ -92,8 +93,7 @@ jobs:
         
       - name: get short sha
         run: |
-          full_sha=${{ github.event.before }}
-          IMAGE_SHA=$(echo $full_sha | cut -c1-7)
+          IMAGE_SHA=$(echo ${{ github.event.before }} | cut -c1-7)
           echo "IMAGE_SHA=$IMAGE_SHA" >> $GITHUB_ENV
 
       
@@ -101,9 +101,6 @@ jobs:
         run: echo "${SECRETS_GITHUB_TOKEN}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
         
       - name: build image to prod
-        env: 
-          IMAGE_TAG: ${{ env.IMAGE_TAG }}
-          IMAGE_SHA: ${{ env.IMAGE_SHA }}
         run: |
           docker pull ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
           docker tag ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA} ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
@@ -111,8 +108,6 @@ jobs:
 
       - name: Deploy prod
         uses: appleboy/ssh-action@v1.0.3
-        env: 
-          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         with:
           host: ${{ secrets.REMOTE_HOST_TEST }}
           username: ubuntu
@@ -120,7 +115,7 @@ jobs:
           port: 22
           envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_TAG,REGISTRY
           script: |
-            echo "$GITHUB_ACTOR $REGISTRY $IMAGE_SHA  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
+            echo "$GITHUB_ACTOR $REGISTRY $IMAGE_TAG  $IMAGE_NAME $SECRETS_GITHUB_TOKEN IMAGE_SHA" > test.txt
             echo "$SECRETS_GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
             docker stop $IMAGE_NAME
             docker rm $IMAGE_NAME
