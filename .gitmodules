@@ -1,6 +1,0 @@
-[submodule "workflows"]
-	path = workflows
-	url = git@github.com:davema-clan/workflow.git
-[submodule ".github/workflows"]
-	path = .github/workflows
-	url = git@github.com:davema-clan/workflow.git
