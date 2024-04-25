@@ -84,7 +84,7 @@ jobs:
             docker run -d --name $IMAGE_NAME ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
 
   admin_approval_job:
-    if: github.event.inputs.admin_approval == 'true' && github.actor == 'admin'
+    if: github.event.inputs.admin_approval == 'true' && github.actor == 'davema-clan'
     runs-on: ubuntu-latest
     steps:
       - name: Approval step
