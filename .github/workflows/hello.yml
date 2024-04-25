@@ -52,12 +52,6 @@ jobs:
     if: ${{ github.ref_type == 'branch' }}
 
     steps:
-      - name: Get Short SHA
-        id: get_short_sha
-        run: |
-          echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
-          echo "Short SHA: $SHORT_SHA"
-
       - name: Deploy Test
         uses: appleboy/ssh-action@v1.0.3
         env:
