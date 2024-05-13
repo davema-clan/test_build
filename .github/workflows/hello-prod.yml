@@ -3,7 +3,6 @@ name: deploy Image for prod
 env:
   # IMAGE_NAME 用于 程序名
   REGISTRY: ghcr.io/${{ github.repository }}
-  IMAGE_NAME: hello
   SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 on:
   release:
