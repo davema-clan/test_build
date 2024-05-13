@@ -10,16 +10,6 @@ on:
     types: [published]
     
 jobs:
-  # admin_approval_job:
-  #   if: github.event.inputs.admin_approval == 'true' && github.actor == 'davema-clan'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Approval step
-  #       run: echo "Admin approval needed"
-  #     - name: Approve
-  #       run: echo "Admin approved"
-  #       id: admin_approval
-
   GetSHA:
     runs-on: ubuntu-latest
 
