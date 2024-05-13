@@ -39,8 +39,8 @@ jobs:
     if: ${{ github.ref_type == 'tag' }}
 
     env:
-      IMAGE_SHA: ${{ needs.GetSHA.outputs.IMAGE_SHA}}
-      IMAGE_NAME:  ${{ needs.GetSHA.outputs.IMAGE_NAME}}
+      IMAGE_SHA: ${{ needs.GetENV.outputs.IMAGE_SHA}}
+      IMAGE_NAME:  ${{ needs.GetENV.outputs.IMAGE_NAME}}
 
     steps:
       - name: Get Tag Name

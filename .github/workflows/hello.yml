@@ -42,8 +42,8 @@ jobs:
 
     env:
 
-      IMAGE_SHA: ${{ needs.GetSHA.outputs.IMAGE_SHA}}
-      IMAGE_NAME:  ${{ needs.GetSHA.outputs.IMAGE_NAME}}
+      IMAGE_SHA: ${{ needs.GetENV.outputs.IMAGE_SHA}}
+      IMAGE_NAME:  ${{ needs.GetENV.outputs.IMAGE_NAME}}
 
     steps:
       - name: Checkout repository
@@ -54,7 +54,6 @@ jobs:
 
       - name: Build images
         run: 
-          echo $IMAGE_SHA $IMAGE_NAME
           make build ARGS="${REGISTRY}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
 
       - name: Push images to repository
