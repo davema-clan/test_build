@@ -58,7 +58,7 @@ jobs:
 
     env:
 
-      IMAGE_SHA: ${{ needs.GetSHA.outputs.IMAGE_SHA}}
+      IMAGE_TAG: ${{ needs.GetSHA.outputs.IMAGE_SHA}}
 
     steps:
       - name: Deploy test
