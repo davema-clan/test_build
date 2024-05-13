@@ -49,7 +49,18 @@ jobs:
       - name: Push images to repository
         run: make push ARGS="${REGISTRY}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
 
+  Deploy:
+    runs-on: ubuntu-latest
 
+    needs: GetSHA
+
+    if: ${{ github.ref_type == 'branch' }}
+
+    env:
+
+      IMAGE_SHA: ${{ needs.GetSHA.outputs.IMAGE_SHA}}
+
+    steps:
       - name: Deploy test
         uses: appleboy/ssh-action@v1.0.3
         with:
