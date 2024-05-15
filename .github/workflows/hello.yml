@@ -69,19 +69,35 @@ jobs:
     env:
       IMAGE_SHA: ${{ needs.GetENV.outputs.IMAGE_SHA}}
       IMAGE_NAME:  ${{ needs.GetENV.outputs.IMAGE_NAME}}
+      IMAGE: ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
 
+    
     steps:
-      - name: Deploy Test
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.REMOTE_HOST_TEST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
-          port: 22
-          envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_SHA,REGISTRY
-          script: |
-            echo "$GITHUB_ACTOR $REGISTRY $IMAGE_SHA  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
-            echo "$SECRETS_GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
-            docker stop $IMAGE_NAME
-            docker rm $IMAGE_NAME
-            docker run -d --name $IMAGE_NAME ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
+      - name: Checkout code
+        uses: actions/checkout@v2
+  
+      - name: Configure AWS credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_KEY }}
+          aws configure set region ap-southeast-1
+  
+      - name: Deploy to AWS
+        run: |
+          aws deploy create-deployment --application-name test --deployment-group-name test --s3-location bucket=codedeploy-coinclan,key=codedeploy.zip,bundleType=zip --deployment-config-name CodeDeployDefault.OneAtATime --description "Deployment Description" --file-exists-behavior DISALLOW --ignore-application-stop-failures --region YourRegion --parameters-overrides "GITHUB_ACTOR=$GITHUB_ACTOR SECRETS_GITHUB_TOKEN=$SECRETS_GITHUB_TOKEN APP_NAME=$IMAGE_NAME IMAGE=$IMAGE"
+
+    # steps:
+    #   - name: Deploy Test
+    #     uses: appleboy/ssh-action@v1.0.3
+    #     with:
+    #       host: ${{ secrets.REMOTE_HOST_TEST }}
+    #       username: ubuntu
+    #       key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+    #       port: 22
+    #       envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_SHA,REGISTRY
+    #       script: |
+    #         echo "$GITHUB_ACTOR $REGISTRY $IMAGE_SHA  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
+    #         echo "$SECRETS_GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+    #         docker stop $IMAGE_NAME
+    #         docker rm $IMAGE_NAME
+    #         docker run -d --name $IMAGE_NAME ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
