@@ -7,7 +7,7 @@ env:
 os: linux
 hooks:
   ApplicationStop:
-    - location: scripts/application-stop.sh
+    - location: scripts/application-stop.sh $APP_NAME
       timeout: 300
       runas: root
   LoginGithub:
@@ -15,6 +15,6 @@ hooks:
       timeout: 300
       runas: root
   ApplicationStart:
-    - location: scripts/application-start.sh
+    - location: scripts/application-start.sh $APP_NAME $IMAGE
       timeout: 300
       runas: root
