@@ -9,7 +9,7 @@ hooks:
   ApplicationStop:
     - location: scripts/application-stop.sh 
       runas: root
-  LoginGithub:
+  BeforeInstall:
     - location: ascripts/login_github.sh
       timeout: 300
       runas: root
