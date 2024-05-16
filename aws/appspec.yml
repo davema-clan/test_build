@@ -1,16 +1,11 @@
 version: 0.0
-env:
-  variables:
-    APP_NAME: ""
-    IMAGE: ""
-
 os: linux
 hooks:
   ApplicationStop:
     - location: scripts/application-stop.sh 
       runas: root
   BeforeInstall:
-    - location: ascripts/login_github.sh
+    - location: scripts/login_github.sh
       timeout: 300
       runas: root
   ApplicationStart:
