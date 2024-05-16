@@ -1,5 +1,5 @@
 #! /bin/bash
-APP_NAME=""
+$APP_NAME=""
 
-echo "app is $APP_NAME "
-docker rm -f ${APP_NAME}
+docker stop $APP_NAME
+docker rm  $APP_NAME
