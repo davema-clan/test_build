@@ -87,7 +87,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_AWS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
         run: |
-          zip codedeploy.zip aws/*
+          zip codedeploy.zip aws 
           aws s3 cp codedeploy.zip s3://codedeploy-coinclan/
           aws deploy create-deployment --application-name test --deployment-group-name test --s3-location bucket=codedeploy-coinclan,key=codedeploy.zip,bundleType=zip --deployment-config-name CodeDeployDefault.OneAtATime --description "Deployment Description" --file-exists-behavior DISALLOW --ignore-application-stop-failures
 
