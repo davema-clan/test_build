@@ -6,16 +6,13 @@ env:
     IMAGE: ""
 
 os: linux
-files:
-  - source: /aws
-    destination: /usr/local/codedeployresources
 hooks:
   ApplicationStop:
     - location: scripts/application-stop.sh
       timeout: 300
       runas: root
   LoginGithub:
-    - location: scripts/login_github.sh
+    - location: ascripts/login_github.sh
       timeout: 300
       runas: root
   ApplicationStart:
