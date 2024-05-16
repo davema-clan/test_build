@@ -1,8 +1,7 @@
 version: 0.0
 env:
   variables:
-    APP_NAME: "hello"
-    IMAGE_TAG: ""
+    APP_NAME: ""
     IMAGE: ""
 
 os: linux

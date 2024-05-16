@@ -78,9 +78,10 @@ jobs:
 
       - name: update script
         run: |
-          sed -i "s|IMAGE=\"\"|IMAGE=$IMAGE|g" aws/appspec.yml
-          sed -i "s|APP_NAME=\"\"|APP_NAME=$IMAGE_NAME|g" aws/appspec.yml
-  
+          echo $IMAGE
+          sed -i "s|IMAGE: \"\"|IMAGE: $IMAGE|g" aws/appspec.yml  
+          sed -i "s|APP_NAME: \"\"|APP_NAME: $IMAGE_NAME|g" aws/appspec.yml  
+
       - name: Deploy to AWS
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.SECRET_AWS_ID }}
