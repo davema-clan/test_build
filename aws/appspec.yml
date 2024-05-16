@@ -11,14 +11,14 @@ files:
     destination: /usr/local/codedeployresources
 hooks:
   ApplicationStop:
-    - location: aws/scripts/application-stop.sh
+    - location: scripts/application-stop.sh
       timeout: 300
       runas: root
   ApplicationStart:
-    - location: aws/scripts/application-start.sh
+    - location: scripts/application-start.sh
       timeout: 300
       runas: root
   ValidateService:
-    - location: aws/scripts/validate-service.sh
+    - location: scripts/validate-service.sh
       timeout: 300
       runas: root
