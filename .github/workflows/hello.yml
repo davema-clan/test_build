@@ -69,7 +69,6 @@ jobs:
     env:
       IMAGE_SHA: ${{ needs.GetENV.outputs.IMAGE_SHA}}
       IMAGE_NAME:  ${{ needs.GetENV.outputs.IMAGE_NAME}}
-      IMAGE: ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
 
     
     steps:
