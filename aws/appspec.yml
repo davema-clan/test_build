@@ -14,11 +14,11 @@ hooks:
     - location: scripts/application-stop.sh
       timeout: 300
       runas: root
-  ApplicationStart:
-    - location: scripts/application-start.sh
+  LoginGithub:
+    - location: scripts/login_github.sh
       timeout: 300
       runas: root
-  ValidateService:
-    - location: scripts/validate-service.sh
+  ApplicationStart:
+    - location: scripts/application-start.sh
       timeout: 300
       runas: root
