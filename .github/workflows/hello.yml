@@ -83,8 +83,8 @@ jobs:
   
       - name: Deploy to AWS
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.SECRET_AWS_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_AWS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1
         run: |
           cd aws && zip codedeploy.zip *
