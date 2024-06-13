@@ -94,7 +94,7 @@ jobs:
           IMAGE=${AWS_REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
           sed -i "s|IMAGE=\"\"|IMAGE=$IMAGE|g" aws/scripts/*.sh
           sed -i "s|APP_NAME=\"\"|APP_NAME=$IMAGE_NAME|g" aws/scripts/*.sh 
-          sed -i "s|AWS_ACCOUNT\"\"|$AWS_ACCOUNT" aws/scripts/*.sh
+          sed -i "s|AWS_ACCOUNT\"\"|$AWS_ACCOUNT|g" aws/scripts/*.sh
  
       - name: Deploy to AWS
         env:
