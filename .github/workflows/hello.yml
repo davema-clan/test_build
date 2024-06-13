@@ -2,7 +2,7 @@ name: Build Image for test
 
 env:
   # IMAGE_NAME 用于 程序名
-  REGISTRY: ghcr.io/${{ github.repository }}
+  REGISTRY: 580167004110.dkr.ecr.ap-southeast-1.amazonaws.com
   SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 on:
   push:
@@ -44,13 +44,16 @@ jobs:
 
       IMAGE_SHA: ${{ needs.GetENV.outputs.IMAGE_SHA}}
       IMAGE_NAME:  ${{ needs.GetENV.outputs.IMAGE_NAME}}
+      AWS_ACCESS_KEY_ID: ${{ secrets.SECRET_AWS_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_AWS_KEY }}
+      AWS_DEFAULT_REGION: ap-southeast-1
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Login to GitHub Packages
-        run: echo "${SECRETS_GITHUB_TOKEN}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+      - name: Login to aws ECR
+        run: aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin ${REGISTRY}
 
       - name: Build images
         run: 
