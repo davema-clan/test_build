@@ -4,10 +4,6 @@ hooks:
   ApplicationStop:
     - location: scripts/application-stop.sh 
       runas: root
-  BeforeInstall:
-    - location: scripts/login_github.sh
-      timeout: 300
-      runas: root
   ApplicationStart:
     - location: scripts/application-start.sh
       timeout: 300
