@@ -18,5 +18,5 @@ clean:
 push:
 	docker push $(ARGS)$(IMAGE_NAME):$(IMAGE_TAG)
 
-rename:
-	docker $(ARGS)$(IMAGE_NAME):$(IMAGE_TAG) $(AWS_REGISTRY)$(IMAGE_NAME):$(IMAGE_TAG)
+ecr:
+	docker tag $(ARGS)$(IMAGE_NAME):$(IMAGE_TAG) $(AWS_REGISTRY)$(IMAGE_NAME):$(IMAGE_TAG)
