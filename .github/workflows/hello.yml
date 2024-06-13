@@ -67,7 +67,7 @@ jobs:
         run: aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin ${AWS_REGISTRY}
 
       - name: Update REPO
-        run: make ecr ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}  AWS_REGISTRY="${AWS_REGISTRY}"
+        run: make ecr ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}  AWS_REGISTRY="${AWS_REGISTRY}/"
 
       - name: Push image to AWS
         run: make push ARGS="${AWS_REGISTRY}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
