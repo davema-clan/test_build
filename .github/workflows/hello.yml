@@ -2,7 +2,8 @@ name: Build Image for test
 
 env:
   # IMAGE_NAME 用于 程序名
-  REGISTRY: 580167004110.dkr.ecr.ap-southeast-1.amazonaws.com
+  GITHUB_REPO: ghcr.io/${{ github.repository }}
+  AWS_REGISTRY: 580167004110.dkr.ecr.ap-southeast-1.amazonaws.com
   SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 on:
   push:
@@ -52,15 +53,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Login to aws ECR
-        run: aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin ${REGISTRY}
+      - name: Login to GitHub Packages
+        run: echo "${SECRETS_GITHUB_TOKEN}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
       - name: Build images
         run: 
-          make build ARGS="${REGISTRY}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
+          make build ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
 
       - name: Push images to repository
-        run: make push ARGS="${REGISTRY}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
+        run: make push ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
+
+      - name: Login to aws ECR
+        run: aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin ${AWS_REGISTRY}
+
+      - name: Update REPO
+        run: make rename ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}  AWS_REGISTRY="${AWS_REGISTRY}"
+
+      - name: Push image to AWS
+        run: make push ARGS="${AWS_REGISTRY}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
 
   Deploy_test:
     runs-on: ubuntu-latest
