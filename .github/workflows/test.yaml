@@ -1,5 +1,12 @@
 on: [push]
 
+env:
+  # IMAGE_NAME 用于 程序名
+  GITHUB_REPO: ghcr.io/${{ github.repository }}
+  AWS_REGISTRY: 580167004110.dkr.ecr.ap-southeast-1.amazonaws.com
+  SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
+  AWS_ACCOUNT: 580167004110
+
 jobs:
   test-public-repo:
 
@@ -15,5 +22,3 @@ jobs:
     - name: Action Test
       id: test
       uses: davema-clan/github-action-tmp@main
-      with:
-        SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
