@@ -15,6 +15,5 @@ jobs:
     - name: Action Test
       id: test
       uses: davema-clan/github-action-tmp@main
-
-    - name: Print sha
-      run: echo "The sha is ${{ steps.test.outputs.SHORT_SHA }}"
+      with:
+        SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
