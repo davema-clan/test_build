@@ -1,0 +1,20 @@
+on: [push]
+
+jobs:
+  test-public-repo:
+
+    runs-on: ubuntu-latest
+
+    name: Get the sha from public repo
+
+    steps:
+    - name: Checkout
+      id: checkout
+      uses: actions/checkout@v4
+
+    - name: Action Test
+      id: test
+      uses: davema-clan/github-action-tmp@main
+
+    - name: Print sha
+      run: echo "The sha is ${{ steps.test.outputs.SHORT_SHA }}"

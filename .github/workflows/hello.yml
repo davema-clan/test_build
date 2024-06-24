@@ -1,122 +1,122 @@
-name: Build Image for test 
+# name: Build Image for test 
 
-env:
-  # IMAGE_NAME 用于 程序名
-  GITHUB_REPO: ghcr.io/${{ github.repository }}
-  AWS_REGISTRY: 580167004110.dkr.ecr.ap-southeast-1.amazonaws.com
-  SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
-  AWS_ACCOUNT: 580167004110
-on:
-  push:
-    branches: [ master ]
+# env:
+#   # IMAGE_NAME 用于 程序名
+#   GITHUB_REPO: ghcr.io/${{ github.repository }}
+#   AWS_REGISTRY: 580167004110.dkr.ecr.ap-southeast-1.amazonaws.com
+#   SECRETS_GITHUB_TOKEN: ${{ secrets.SECRETS_GITHUB_TOKEN }}
+#   AWS_ACCOUNT: 580167004110
+# on:
+#   push:
+#     branches: [ master ]
 
     
-jobs:
-  GetENV:
-    runs-on: ubuntu-latest
+# jobs:
+#   GetENV:
+#     runs-on: ubuntu-latest
 
-    outputs:
-      IMAGE_SHA: ${{ steps.get_short_sha.outputs.SHORT_SHA}}
-      IMAGE_NAME: ${{ steps.get_image_name.outputs.IMAGE_NAME}}
+#     outputs:
+#       IMAGE_SHA: ${{ steps.get_short_sha.outputs.SHORT_SHA}}
+#       IMAGE_NAME: ${{ steps.get_image_name.outputs.IMAGE_NAME}}
 
-    steps:
-      - name: Get Short SHA
-        id: get_short_sha
-        run: |
-          SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "Short SHA: $SHORT_SHA"
+#     steps:
+#       - name: Get Short SHA
+#         id: get_short_sha
+#         run: |
+#           SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)
+#           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
+#           echo "Short SHA: $SHORT_SHA"
       
-      - name: Get IMAGE_NAME
-        id: get_image_name
-        run: |
-          IFS='/' read -ra REPO_PARTS <<< "$GITHUB_REPOSITORY"
-          IMAGE_NAME=${REPO_PARTS[1]}
-          echo "Current repository name: $IMAGE_NAME"
-          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
+#       - name: Get IMAGE_NAME
+#         id: get_image_name
+#         run: |
+#           IFS='/' read -ra REPO_PARTS <<< "$GITHUB_REPOSITORY"
+#           IMAGE_NAME=${REPO_PARTS[1]}
+#           echo "Current repository name: $IMAGE_NAME"
+#           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
 
-  Build:
-    runs-on: ubuntu-latest
+#   Build:
+#     runs-on: ubuntu-latest
 
-    needs: GetENV
+#     needs: GetENV
 
-    if: ${{ github.ref_type == 'branch' }}
+#     if: ${{ github.ref_type == 'branch' }}
 
-    env:
+#     env:
 
-      IMAGE_SHA: ${{ needs.GetENV.outputs.IMAGE_SHA}}
-      IMAGE_NAME:  ${{ needs.GetENV.outputs.IMAGE_NAME}}
-      AWS_ACCESS_KEY_ID: ${{ secrets.SECRET_AWS_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_AWS_KEY }}
-      AWS_DEFAULT_REGION: ap-southeast-1
+#       IMAGE_SHA: ${{ needs.GetENV.outputs.IMAGE_SHA}}
+#       IMAGE_NAME:  ${{ needs.GetENV.outputs.IMAGE_NAME}}
+#       AWS_ACCESS_KEY_ID: ${{ secrets.SECRET_AWS_ID }}
+#       AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_AWS_KEY }}
+#       AWS_DEFAULT_REGION: ap-southeast-1
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
 
-      - name: Login to GitHub Packages
-        run: echo "${SECRETS_GITHUB_TOKEN}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+#       - name: Login to GitHub Packages
+#         run: echo "${SECRETS_GITHUB_TOKEN}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
-      - name: Build images
-        run: 
-          make build ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
+#       - name: Build images
+#         run: 
+#           make build ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
 
-      - name: Push images to repository
-        run: make push ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
+#       - name: Push images to repository
+#         run: make push ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
 
-      - name: Login to aws ECR
-        run: aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin ${AWS_REGISTRY}
+#       - name: Login to aws ECR
+#         run: aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin ${AWS_REGISTRY}
 
-      - name: Update REPO
-        run: make ecr ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}  AWS_REGISTRY="${AWS_REGISTRY}/"
+#       - name: Update REPO
+#         run: make ecr ARGS="${GITHUB_REPO}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}  AWS_REGISTRY="${AWS_REGISTRY}/"
 
-      - name: Push image to AWS
-        run: make push ARGS="${AWS_REGISTRY}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
+#       - name: Push image to AWS
+#         run: make push ARGS="${AWS_REGISTRY}/" IMAGE_TAG="${IMAGE_SHA}" IMAGE_NAME=${IMAGE_NAME}
 
-  Deploy_test:
-    runs-on: ubuntu-latest
+#   Deploy_test:
+#     runs-on: ubuntu-latest
     
-    needs: [ GetENV, Build ]
+#     needs: [ GetENV, Build ]
 
-    if: ${{ github.ref_type == 'branch' }}
+#     if: ${{ github.ref_type == 'branch' }}
 
-    env:
-      IMAGE_SHA: ${{ needs.GetENV.outputs.IMAGE_SHA}}
-      IMAGE_NAME:  ${{ needs.GetENV.outputs.IMAGE_NAME}}
+#     env:
+#       IMAGE_SHA: ${{ needs.GetENV.outputs.IMAGE_SHA}}
+#       IMAGE_NAME:  ${{ needs.GetENV.outputs.IMAGE_NAME}}
 
     
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
 
-      - name: update script
-        run: |
-          IMAGE=${AWS_REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
-          sed -i "s|IMAGE=\"\"|IMAGE=$IMAGE|g" aws/scripts/*.sh
-          sed -i "s|APP_NAME=\"\"|APP_NAME=$IMAGE_NAME|g" aws/scripts/*.sh 
-          sed -i "s|AWS_ACCOUNT\"\"|$AWS_ACCOUNT|g" aws/scripts/*.sh
+#       - name: update script
+#         run: |
+#           IMAGE=${AWS_REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
+#           sed -i "s|IMAGE=\"\"|IMAGE=$IMAGE|g" aws/scripts/*.sh
+#           sed -i "s|APP_NAME=\"\"|APP_NAME=$IMAGE_NAME|g" aws/scripts/*.sh 
+#           sed -i "s|AWS_ACCOUNT\"\"|$AWS_ACCOUNT|g" aws/scripts/*.sh
  
-      - name: Deploy to AWS
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.SECRET_AWS_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_AWS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-1
-        run: |
-          cd aws && zip -r codedeploy.zip *
-          aws s3 cp codedeploy.zip s3://codedeploy-coinclan/
+#       - name: Deploy to AWS
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.SECRET_AWS_ID }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_AWS_KEY }}
+#           AWS_DEFAULT_REGION: ap-southeast-1
+#         run: |
+#           cd aws && zip -r codedeploy.zip *
+#           aws s3 cp codedeploy.zip s3://codedeploy-coinclan/
 
-    # steps:
-    #   - name: Deploy Test
-    #     uses: appleboy/ssh-action@v1.0.3
-    #     with:
-    #       host: ${{ secrets.REMOTE_HOST_TEST }}
-    #       username: ubuntu
-    #       key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
-    #       port: 22
-    #       envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_SHA,REGISTRY
-    #       script: |
-    #         echo "$GITHUB_ACTOR $REGISTRY $IMAGE_SHA  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
-    #         echo "$SECRETS_GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
-    #         docker stop $IMAGE_NAME
-    #         docker rm $IMAGE_NAME
-    #         docker run -d --name $IMAGE_NAME ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
+#     # steps:
+#     #   - name: Deploy Test
+#     #     uses: appleboy/ssh-action@v1.0.3
+#     #     with:
+#     #       host: ${{ secrets.REMOTE_HOST_TEST }}
+#     #       username: ubuntu
+#     #       key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+#     #       port: 22
+#     #       envs: GITHUB_ACTOR,SECRETS_GITHUB_TOKEN,IMAGE_NAME,IMAGE_SHA,REGISTRY
+#     #       script: |
+#     #         echo "$GITHUB_ACTOR $REGISTRY $IMAGE_SHA  $IMAGE_NAME $SECRETS_GITHUB_TOKEN" > test.txt
+#     #         echo "$SECRETS_GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+#     #         docker stop $IMAGE_NAME
+#     #         docker rm $IMAGE_NAME
+#     #         docker run -d --name $IMAGE_NAME ${REGISTRY}/${IMAGE_NAME}:${IMAGE_SHA}
