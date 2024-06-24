@@ -23,4 +23,4 @@ jobs:
       id: test
       uses: davema-clan/github-action-tmp@main
       with:
-        remote_host_test: ${{ secrets.REMOTE_HOST_TEST }}
+        remote_host_test: ${{ secrets.TEST_HOST }}
