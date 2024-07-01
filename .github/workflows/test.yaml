@@ -26,7 +26,7 @@ jobs:
         token: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 
     - name: check repo
-      run:
+      run: |
         pwd
         ls ./
 
