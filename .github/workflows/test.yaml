@@ -37,4 +37,4 @@ jobs:
 
     - name: Action Test
       id: test
-      uses: ./github-action-tmp
+      uses: ./
