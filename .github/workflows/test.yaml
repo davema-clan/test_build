@@ -30,6 +30,7 @@ jobs:
         repository: davema-clan/github-action-tmp
         token: ${{ secrets.SECRETS_GITHUB_TOKEN }}
         path: ./github-action-tmp
+        ref: prod
 
     - name: check repo
       run: |
