@@ -27,4 +27,4 @@ jobs:
 
     - name: Action Test
       id: test
-      uses: ./davema-clan/github-action-tmp/action.yaml
+      uses: ./github-action-tmp/action.yaml
