@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: checkout action repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
       with: 
         repository: davema-clan/github-action-tmp
         token: ${{ secrets.SECRETS_GITHUB_TOKEN }}
