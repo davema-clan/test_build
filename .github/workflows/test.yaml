@@ -29,6 +29,7 @@ jobs:
       with: 
         repository: davema-clan/github-action-tmp
         token: ${{ secrets.SECRETS_GITHUB_TOKEN }}
+        path: ./github-action-tmp
 
     - name: check repo
       run: |
@@ -37,4 +38,4 @@ jobs:
 
     - name: Action Test
       id: test
-      uses: ./
+      uses: ./github-action-tmp
