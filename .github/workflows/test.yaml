@@ -25,6 +25,10 @@ jobs:
         repository: davema-clan/github-action-tmp
         token: ${{ secrets.SECRETS_GITHUB_TOKEN }}
 
+    - name: check repo
+      run:
+        ls ./github-action-tmp
+
     - name: Action Test
       id: test
       uses: ./github-action-tmp
