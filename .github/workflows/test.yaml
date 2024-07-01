@@ -19,8 +19,12 @@ jobs:
       id: checkout
       uses: actions/checkout@v4
 
+    - name: checkout action repo
+      uses: actions/checkout@v4
+      with: 
+        repository: davema-clan/github-action-tmp
+        token: ${{ secrets.SECRETS_GITHUB_TOKEN }}
+
     - name: Action Test
       id: test
-      uses: davema-clan/github-action-tmp@main
-      with:
-        remote_host_test: ${{ secrets.TEST_HOST }}
+      uses: ./davema-clan/github-action-tmp/action.yaml
